@@ -56,6 +56,44 @@ Start the function running nerve.py with arguments. See --help for usage details
 As the helpfile to nerve.py states, the credentials may be provided in three different ways: as an environment variable, in a file or per command line prompt. 
 Check the *set_login_environment_vars.sh* script to understand the naming of the variables.
 
+### Example Usage
+
+The main entry point for the command line is the `nerve.py` script. Run `python nerve.py --help` to get detailed information about all available commands.
+
+Before any of the commands can be run on a management system, one needs to login. There are several ways to provide credentials. One way is to run the `set_login` command and provide the credentials and the Management System URL interactively:
+
+```bash
+python nerve.py set_login
+# provide the requested information
+```
+
+When running the command, a login will be performed and the session information will be stored in the `session_id.ini` file. To logout one can either run the `python nerve.py logout` command. If you delete the `session_id.ini` file, a new login will be required.
+
+Now we can perform operations on the Management system like e.g. listing all the docker workloads that are available on the management system:
+
+```bash
+python nerve.py list_workloads --type docker --output workloads.json --human
+# this will write the result into the json file workloads.json and also print it to the command line in a human readable way
+```
+For more details about the command check the help `python nerve.py list_workloads --help`.
+
+Another use case might be to get a list of all nodes where a specific workload version is currently deployed:
+```bash
+# list all nodes where workload with name 'nginx' is deployed in version 'v1' and save output also as json in 'nodes.json'
+python nerve.py list_nodes -wn nginx -vn v1 --human --file nodes.json
+```
+
+The scripts also provide a workflow to create a new workload. Simply define the workload via a `json` file. To make it easier to create such a file, a template can be created from an existing workload:
+```bash
+# to create a docker workload first fetch a json file that contains such workload definitions from existing workloads on the management system
+python nerve.py list_workloads --type docker --output workloads.json
+# now take the first workload from that query and create a template from it for the new workload to be created
+python nerve.py create_wl_template --input_file workloads.json --output_file wl_def.json
+# now open the wl_def.json file with a text editor and adjust it to your needs to represent the new workload to be created and save it e.g. as 'new_wl.json'
+# after that the new workload can be created on the Management System
+python nerve.py create_workload --template new_wl.json
+```
+
 ## Use as Library
 
 The API functions require one commonly held state which is the session id after login. The session is stored in session_id.ini in the file system. This was done to avoid handing the state through all calls.
