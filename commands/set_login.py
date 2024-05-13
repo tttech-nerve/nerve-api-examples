@@ -175,10 +175,10 @@ def handle_set_login(args):
         print(f"Warning: Could not determine the version of the management system. {e}")
         return
 
-    if (version not in ["2.8.0"]):
+    if (version not in ["2.8.0", "2.8.1"]):
         print("")
-        print("Warning: This tool was tested with version 2.8.0 of the Nerve management system."+
-              " It may not work with other versions.")
+        print("Warning: This tool was tested with version 2.8.0 (and newer) of the Nerve management system."+
+              " It may not work with older versions.")
         print("Your management system is running version", version, ".")
 
     print()
