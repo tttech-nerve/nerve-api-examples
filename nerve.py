@@ -246,7 +246,7 @@ def main():
 # parser_restart_workloads.add_argument("-v",'--verify', help='Verify the workloads after the action. 
 # Use with a time value in seconds, otherwise 15 seconds are assumed', nargs="?", type=int, const=15, default=argparse.
 # SUPPRESS, action="store")
-    parser_restart_workloads.add_argument("-V" '--verbose', help='Show debug information.', action="store_true")
+    parser_restart_workloads.add_argument("-V", '--verbose', help='Show debug information.', action="store_true")
     parser_restart_workloads.set_defaults(func=handle_restart_workloads)
 
 
