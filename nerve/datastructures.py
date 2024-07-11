@@ -18,13 +18,13 @@
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
 """Datastructures for the workloads. The datastructures are separated out as reference for the Nerve API.
 
-They hold the data necessary to create docker workloads in the Nerve API. They are coarsely aligned with the 
+They hold the data necessary to create docker workloads in the Nerve API. They are coarsely aligned with the
 structures used by the API.
 """
 #
 from dataclasses import dataclass, field
 from typing import List, Optional,  Union
-from nerveapi.utils import DataNotAsExpected
+from .utils import DataNotAsExpected
 
 
 # Data structures for the Nerve API
@@ -163,7 +163,7 @@ def create_remote_connection_definition_from_json(item):
     - item (dict): The dictionary containing the remote connection data.
 
     Returns:
-    - RemoteConnection_Definition: An instance populated with the data from 'item', or None if 
+    - RemoteConnection_Definition: An instance populated with the data from 'item', or None if
       the type is unsupported or 'item' is None.
 
     Raises:
@@ -192,7 +192,7 @@ def create_workload_version_definition_from_json(item, type):
     - type (str): The type of the workload.
 
     Returns:
-    - RemoteConnection_Definition: An instance populated with the data from 'item', or None if 
+    - RemoteConnection_Definition: An instance populated with the data from 'item', or None if
       the type is unsupported or 'item' is None.
 
     Raises:
@@ -282,7 +282,7 @@ def create_workload_definition_from_json(json_data):
                 create_workload_version_definition_from_json(item, type))
     else:
         raise DataNotAsExpected(f"Type {type} not supported yet.")
-    
+
     return Workload_Definition(
         type=type,
         name=json_data.get("name"),

@@ -18,9 +18,9 @@
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
 """Implementation of the create_wl_template command."""
 
-from nerveapi.workloads import get_workload_info
-from nerveapi.utils import load_json, append_ending, ActionUnsuccessful, DataNotAsExpected, complainIfKeysAreNotInDict
-from nerveapi.datastructures import create_workload_definition_from_json
+from nerve.workloads import get_workload_info
+from nerve.utils import load_json, append_ending, ActionUnsuccessful, DataNotAsExpected, complainIfKeysAreNotInDict
+from nerve.datastructures import create_workload_definition_from_json
 from dataclasses import asdict
 import json
 from json import JSONDecodeError
@@ -30,22 +30,22 @@ def handle_create_wl_template(args):
     """Handles the creation of a workload template based on an input JSON file.
 
     This function loads a workload list from a specified JSON file, then fetches detailed information
-    for the first workload in the list from the management system. It supports workloads of type 'docker' 
+    for the first workload in the list from the management system. It supports workloads of type 'docker'
     and rewrites the definition to create a template from which a new workload can be created. The resulting
     template is saved to a specified output file.
-    Note that only the first workload in the list is considered for creating the template but that all versions of this 
+    Note that only the first workload in the list is considered for creating the template but that all versions of this
     workload are considered. If you want to create only one version, remove the others from the input file.
 
 
     Parameters:
-    - args: A namespace object from argparse containing command-line arguments. Expected to have 
-            'input_file' and 'output_file' attributes specifying the input and output JSON filenames, 
+    - args: A namespace object from argparse containing command-line arguments. Expected to have
+            'input_file' and 'output_file' attributes specifying the input and output JSON filenames,
             and a 'verbose' attribute to control verbose output.
 
     Returns:
     - None: The function writes the resulting template to a file and does not return a value.
     """
-    #    
+    #
     input_filename = append_ending(args.input_file, ".json")
     output_filename = append_ending(args.output_file, ".json")
     try:
@@ -75,9 +75,9 @@ def handle_create_wl_template(args):
     if args.verbose and len(wl.get('versions')) > 1:
         print(f"The workload in the input list has {len(wl.get('versions'))} versions.")
 
-    # The workload info is needed to get the id of the workload, to see if we 
+    # The workload info is needed to get the id of the workload, to see if we
     # add to the workload or create a new one
-    
+
     if (args.verbose):
         print(f"Getting workload info for {wl.get('name')} with id {wl.get('_id')}.")
     try:
@@ -109,17 +109,17 @@ def handle_create_wl_template(args):
 
 def rewrite_original_source_definition(wl_info_dict):
     """Rewrites the original source definition in the workload information dictionary.
-     
+
     This is done to rewrite the information of the docker source to a simplified format which is used in the template.
 
     The function iterates through all versions of the workload information.
 
     Parameters:
-    - wl_info_dict: A dictionary containing the workload information fetched from the management system. 
+    - wl_info_dict: A dictionary containing the workload information fetched from the management system.
                     It is expected to include a 'versions' key with a list of version dictionaries.
 
     Returns:
-    - A modified version of the input dictionary where the source definitions have been rewritten to the 
+    - A modified version of the input dictionary where the source definitions have been rewritten to the
       simplified format. This dictionary is suitable for use in creating workload templates.
     """
     #

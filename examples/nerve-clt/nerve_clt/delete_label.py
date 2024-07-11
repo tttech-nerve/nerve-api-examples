@@ -18,8 +18,8 @@
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
 """Implementation of the delete label command."""
 
-from nerveapi.labels import delete_label
-from nerveapi.utils import ActionUnsuccessful
+from nerve.labels import delete_label
+from nerve.utils import ActionUnsuccessful
 
 def handle_delete_label(args):
     """Implementation of the create_label command."""

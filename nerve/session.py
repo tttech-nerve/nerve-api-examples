@@ -19,11 +19,11 @@
 """Session handling."""
 
 import requests
-from nerveapi.utils import (
-    load_session_id, 
-    save_session_id, 
+from .utils import (
+    load_session_id,
+    save_session_id,
     complainIfKeysAreNotInDict,
-    complainIfNotAList, 
+    complainIfNotAList,
     serverMessage,
     ActionUnsuccessful
 )
@@ -60,7 +60,7 @@ def login(base_url, identity, secret):
         session_id = response.json().get('user').get('sessionId')
         save_session_id(session_id, base_url)
         return session_id
-    
+
     elif response.status_code == 403:
         raise ActionUnsuccessful("Invalid credentials provided.")
     else:
@@ -70,7 +70,7 @@ def login(base_url, identity, secret):
 def logout():
     """Attempt to log out of the Nerve management system by sending a logout request.
 
-    This function does not take any parameters. It uses a previously stored session ID to authenticate the logout 
+    This function does not take any parameters. It uses a previously stored session ID to authenticate the logout
     request. If the logout is successful, it will clear the stored session ID and logout from the MS.
 
     Raises:
@@ -96,7 +96,7 @@ def make_request(endpoint, method='GET', data=None, files=None, workaround=None)
     - method: The HTTP method to use (e.g., 'GET', 'POST').
     - data: The data to send in the request (applicable for POST requests).
     - files: The files to send in the request (applicable for multipart/form-data POST requests).
-    - workaround: Injects the session ID into the data as SessionToken, if "Inject_Session_Token_To_Controller_Call" 
+    - workaround: Injects the session ID into the data as SessionToken, if "Inject_Session_Token_To_Controller_Call"
       is given. This is a workaround to avoid the need of putting the sessionId in the operative level of the function
       calls.
 
@@ -107,7 +107,7 @@ def make_request(endpoint, method='GET', data=None, files=None, workaround=None)
     (session_id, base_url) = load_session_id()
     if not session_id or not base_url:
         raise ActionUnsuccessful("Please log in.")
-    
+
 
     headers = {'sessionId': session_id,
                'Sec-Fetch-Dest': 'empty',
@@ -158,7 +158,7 @@ def make_request(endpoint, method='GET', data=None, files=None, workaround=None)
 def get_ms_version():
     """Retrieves the  version of the Nerve management system from the cloud.
 
-    This function makes an authenticated request to the Nerve management system's update endpoint and returns 
+    This function makes an authenticated request to the Nerve management system's update endpoint and returns
     the current version.
 
     Raises:
@@ -170,7 +170,7 @@ def get_ms_version():
     """
     result = make_request('/nerve/update/cloud/current-version')
     data = result.json()
-    
+
     complainIfKeysAreNotInDict(data, ["currentVersion"])
 
     return data["currentVersion"]

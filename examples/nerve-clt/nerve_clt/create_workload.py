@@ -19,9 +19,9 @@
 """Implementation of the create_workload command."""
 
 import json
-from nerveapi.utils import append_ending, ActionUnsuccessful
-from nerveapi.datastructures import create_workload_definition_from_json
-from nerveapi.workloads import create_workload_in_ms
+from nerve.utils import append_ending, ActionUnsuccessful
+from nerve.datastructures import create_workload_definition_from_json
+from nerve.workloads import create_workload_in_ms
 
 
 def handle_create_workload(args):
@@ -45,7 +45,7 @@ def handle_create_workload(args):
     except Exception as e:
         print(f"Error creating workload definition from template file: {e}")
         return
-    
+
     if args.verbose:
         print(f"Creating workload {workload_definition.name}.")
 
@@ -56,6 +56,5 @@ def handle_create_workload(args):
     except ActionUnsuccessful as e:
         print(e)
         return
-    
+
     print("Workload created.")
-    

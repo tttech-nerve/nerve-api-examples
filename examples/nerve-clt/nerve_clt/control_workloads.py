@@ -18,10 +18,10 @@
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
 """Implementation of the control_workloads command."""
 
-from nerveapi.utils import (
+from nerve.utils import (
     load_json,
     append_ending, ActionUnsuccessful)
-from nerveapi.nodes import (
+from nerve.nodes import (
     control_workload,
     create_node_list_from_node_list,
     all_nodes_have_serial_numbers,
@@ -84,7 +84,7 @@ def handle_control_workloads(action, args):
             if (args.verbose):
                 print(
                     f"Will {action} workload {wl['device_id']} on {node['serial_number']}.")
-                
+
             try:
                 control_workload(action, node["serial_number"], wl["device_id"])
                 count += 1

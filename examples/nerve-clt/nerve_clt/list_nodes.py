@@ -18,10 +18,10 @@
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
 """Implementation of the list_nodes command."""
 
-from nerveapi.nodes import create_node_list, filter_node_list
-from nerveapi.nodes import get_deployed_workloads_from_node, filter_node_list_for_wl
-from nerveapi.utils import ActionUnsuccessful, load_json, save_json, append_ending
-from nerveapi.labels import get_labels
+from nerve.nodes import create_node_list, filter_node_list
+from nerve.nodes import get_deployed_workloads_from_node, filter_node_list_for_wl
+from nerve.utils import ActionUnsuccessful, load_json, save_json, append_ending
+from nerve.labels import get_labels
 from json import JSONDecodeError
 
 

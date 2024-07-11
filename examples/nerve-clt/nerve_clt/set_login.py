@@ -21,24 +21,24 @@
 It supports fetching credentials from various sources, including command-line arguments, environment variables,
 credentials stored in a file, and user input.
 Additionally, it attempts to login with these credentials and saves the session ID for further use.
-This module is a part of the TTTech Industrial Automation AG's nerveapi package, intended to streamline the process of 
+This module is a part of the TTTech Industrial Automation AG's nerveapi package, intended to streamline the process of
 interacting with the Nerve management system.
 """
 import os
 import getpass
 import validators
 
-from nerveapi.session import (
+from nerve.session import (
     login,
     get_ms_version
 )
-from nerveapi.utils import (
+from nerve.utils import (
     save_session_id,
     ActionUnsuccessful,
     load_credentials_from_file,
     save_credentials
 )
-from nerveapi.utils import append_ending, DataNotAsExpected
+from nerve.utils import append_ending, DataNotAsExpected
 
 
 def handle_set_login(args):
@@ -50,11 +50,11 @@ def handle_set_login(args):
     3. Credentials stored in a specified file.
     4. Direct user input if the above methods do not yield credentials.
 
-    After obtaining the credentials, it attempts to log in to the Nerve management system. If successful, the session 
+    After obtaining the credentials, it attempts to log in to the Nerve management system. If successful, the session
     ID is saved for future use. Additionally, the user is given the option to save these credentials for later use.
 
     Parameters:
-    args (Namespace): An argparse Namespace object containing potential URL, username, and password among other 
+    args (Namespace): An argparse Namespace object containing potential URL, username, and password among other
     command-line arguments.
 
     Returns:
@@ -72,11 +72,11 @@ def handle_set_login(args):
     if args.password:
         password = args.password
 
-    if url: 
+    if url:
         print("URL found in command-line arguments:", url)
-    if username: 
+    if username:
         print("Username found in command-line arguments:", username)
-    if password: 
+    if password:
         print("Password found in command-line arguments.")
 
     if not url and os.getenv('NERVE_URL'):
@@ -129,7 +129,7 @@ def handle_set_login(args):
         password = getpass.getpass("Enter your password: ")
         prompted_for_password = True
 
-    if not validators.url(url): 
+    if not validators.url(url):
         print("Invalid URL provided.")
         return
     if not validators.email(username):
@@ -149,7 +149,7 @@ def handle_set_login(args):
     # Save the credentials to a file if the user had to enter the PW and he wants to save it.
     if (prompted_for_password or prompted_for_username):
             # ask if the user wants to save the credentials
-            if not args.yes: 
+            if not args.yes:
                 save = input(f"Do you want to save the credentials in {filename} ? (y/n) ")
             else:
                 save = "y"
@@ -160,7 +160,7 @@ def handle_set_login(args):
             else:
                 pw_to_save = None
                 username_to_save = None
-            
+
             save_credentials(url, username_to_save, pw_to_save, filename)
 
 

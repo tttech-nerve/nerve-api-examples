@@ -18,10 +18,10 @@
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
 """Implementation of the reboot_nodes command."""
 
-from nerveapi.utils import (
+from nerve.utils import (
     load_json,
     append_ending, ActionUnsuccessful)
-from nerveapi.nodes import (
+from nerve.nodes import (
     reboot_node,
     create_node_list_from_node_list,
     all_nodes_have_serial_numbers

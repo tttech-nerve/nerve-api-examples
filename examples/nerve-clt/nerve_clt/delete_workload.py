@@ -18,8 +18,8 @@
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
 """Implementation of the delete_workload command."""
 
-from nerveapi.workloads import delete_workload_from_ms
-from nerveapi.utils import load_json, append_ending, ActionUnsuccessful
+from nerve.workloads import delete_workload_from_ms
+from nerve.utils import load_json, append_ending, ActionUnsuccessful
 from json import JSONDecodeError
 
 

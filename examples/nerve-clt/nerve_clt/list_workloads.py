@@ -18,27 +18,27 @@
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
 """Implementation of the list_workloads command."""
 
-from nerveapi.workloads import list_workloads, filter_workloads, get_workload_info
-from nerveapi.utils import save_json
-from nerveapi.utils import append_ending, ActionUnsuccessful, DataNotAsExpected
+from nerve.workloads import list_workloads, filter_workloads, get_workload_info
+from nerve.utils import save_json
+from nerve.utils import append_ending, ActionUnsuccessful, DataNotAsExpected
 
 
 def handle_workloads_list(args):
     """Handles the listing, filtering, and detailing of workloads.
-    
-    First, it retrieves a list of workloads and applies filtering based on the criteria specified in the arguments 
-    (e.g., name, ID, type, version_name, and disabled status). It then fetches detailed information for each workload, 
-    if verbose output is requested. Supports handling of different workload types including docker, codesys, and vm. 
+
+    First, it retrieves a list of workloads and applies filtering based on the criteria specified in the arguments
+    (e.g., name, ID, type, version_name, and disabled status). It then fetches detailed information for each workload,
+    if verbose output is requested. Supports handling of different workload types including docker, codesys, and vm.
     Unsupported workload types are flagged.
-    
-    If human-readable output is requested, it calls `print_human` to print the details. 
+
+    If human-readable output is requested, it calls `print_human` to print the details.
     Otherwise, it can save the filtered and detailed workloads list to a JSON file if an output filename is provided.
-    
+
     Parameters:
     - args: A namespace object from argparse containing the command-line arguments.
-    
+
     Returns:
-    - A list of Workload_Information objects, each potentially enriched with detailed information based on 
+    - A list of Workload_Information objects, each potentially enriched with detailed information based on
     the command-line arguments.
     """
     #
@@ -66,15 +66,15 @@ def handle_workloads_list(args):
     for i in range(len(result)):
         try:
             # TODO add more when supporting the other types
-            if   (result[i]["type"] == "docker" 
-                  or result[i]["type"] == "codesys" 
+            if   (result[i]["type"] == "docker"
+                  or result[i]["type"] == "codesys"
                   or result[i]["type"] == "vm"
                   ):
                 if (args.verbose):
                     print(f"Fetching details for {result[i]['name']}.")
                 result[i] = get_workload_info(_id=result[i]["_id"])
-            else: 
-                found_unsupported = True                
+            else:
+                found_unsupported = True
         except ActionUnsuccessful as e:
             print(e)
     if found_unsupported:

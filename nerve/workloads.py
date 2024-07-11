@@ -239,7 +239,7 @@ def add_workload_version_in_ms(
     :return: The workload ID on success, or None if sequential mode is not used.
     """
     #
-    # This function takes the current workload info, modifies it and sends it back to the server. This results in a new 
+    # This function takes the current workload info, modifies it and sends it back to the server. This results in a new
     # version being added.
     wl_info = get_workload_info(_id=wl_id)  # First, get the current workload information to modify it.
     if not wl_info:
