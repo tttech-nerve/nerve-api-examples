@@ -315,7 +315,7 @@ def prepare_docker_version_dict_from_wl_def(wl_version_def, wl_info):
         wl_info["versions"][0]["dockerFileOption"] = "path"
         wl_info["versions"][0]["dockerFilePath"] = wl_version_def.source.path
         if wl_version_def.source.auth_credentials:
-            wl_info["versions"][0]["auth_credentials"] = {
+            wl_info["versions"][0]["workloadProperties"]["auth_credentials"] = {
                 "username": wl_version_def.source.auth_credentials.username,
                 "password": wl_version_def.source.auth_credentials.password,
             }
