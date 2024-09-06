@@ -21,9 +21,10 @@
 from nerveapi.workloads import list_workloads, filter_workloads, get_workload_info
 from nerveapi.utils import save_json
 from nerveapi.utils import append_ending, ActionUnsuccessful, DataNotAsExpected
+from commands.utils import eprint
 
 
-def handle_workloads_list(args):
+def handle_workloads_list(args) -> int:
     """Handles the listing, filtering, and detailing of workloads.
     
     First, it retrieves a list of workloads and applies filtering based on the criteria specified in the arguments 
@@ -38,8 +39,7 @@ def handle_workloads_list(args):
     - args: A namespace object from argparse containing the command-line arguments.
     
     Returns:
-    - A list of Workload_Information objects, each potentially enriched with detailed information based on 
-    the command-line arguments.
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error.
     """
     #
 
@@ -47,8 +47,8 @@ def handle_workloads_list(args):
     try:
         workload_list = list_workloads(args.verbose)
     except ActionUnsuccessful as e:
-        print(e)
-        return
+        eprint(e)
+        return 1
 
 # filtering. Version details can only be filtered in the next go
     result = filter_workloads(workload_list,
@@ -84,8 +84,8 @@ def handle_workloads_list(args):
     try:
         result = filter_workloads(result, version_name=args.version_name)
     except DataNotAsExpected as e:
-        print("Error filtering the workloads: " + str(e))
-        return
+        eprint("Error filtering the workloads: " + str(e))
+        return 1
 
 # result is now a list of Workload_Information objects.
 
@@ -99,7 +99,7 @@ def handle_workloads_list(args):
         save_json(result, output_filename)
         print(f"Saved result to {output_filename}. Contains {len(result)} workload{'s'[:len(result)!=1]}.")
 
-    return result
+    return 0
 
 def __print_human(workload_list):
     if len(workload_list) == 0:

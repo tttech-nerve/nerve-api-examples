@@ -22,10 +22,15 @@ import json
 from nerveapi.utils import append_ending, ActionUnsuccessful
 from nerveapi.datastructures import create_workload_definition_from_json
 from nerveapi.workloads import create_workload_in_ms
+from commands.utils import eprint
 
 
-def handle_create_workload(args):
-    """Implementation of the create_workload command."""
+def handle_create_workload(args) -> int:
+    """Implementation of the create_workload command.
+    
+    Returns:
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error.
+    """
     #
     template = {}
     filename = append_ending(args.template, ".json")
@@ -33,18 +38,19 @@ def handle_create_workload(args):
         with open(filename, 'r') as file:
             template = json.load(file)
     except FileNotFoundError:
-        print(
-            f"File {filename} not found.")
-        return
+        eprint(
+            f"File {filename} not found."
+        )
+        return 1
     except json.JSONDecodeError:
-        print(f"File {filename} does not contain valid JSON.")
-        return
+        eprint(f"File {filename} does not contain valid JSON.")
+        return 1
 
     try:
         workload_definition = create_workload_definition_from_json(template)
     except Exception as e:
-        print(f"Error creating workload definition from template file: {e}")
-        return
+        eprint(f"Error creating workload definition from template file: {e}")
+        return 1
     
     if args.verbose:
         print(f"Creating workload {workload_definition.name}.")
@@ -54,8 +60,9 @@ def handle_create_workload(args):
         create_workload_in_ms(workload_definition,
                               sequential=args.sequential, verbose=args.verbose)
     except ActionUnsuccessful as e:
-        print(e)
-        return
+        eprint(e)
+        return 1
     
     print("Workload created.")
+    return 0
     

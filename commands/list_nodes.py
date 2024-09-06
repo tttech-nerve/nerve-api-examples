@@ -22,11 +22,16 @@ from nerveapi.nodes import create_node_list, filter_node_list
 from nerveapi.nodes import get_deployed_workloads_from_node, filter_node_list_for_wl
 from nerveapi.utils import ActionUnsuccessful, load_json, save_json, append_ending
 from nerveapi.labels import get_labels
+from commands.utils import eprint
 from json import JSONDecodeError
 
 
-def handle_list_nodes(args):
-    """Implementation of the list_nodes command."""
+def handle_list_nodes(args) -> int:
+    """Implementation of the list_nodes command.
+    
+    Returns:
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error.
+    """
     #
     # for the moment this is quite inefficient.
     # First, it gets a list of all nodes.
@@ -35,16 +40,16 @@ def handle_list_nodes(args):
     try:
         ms_labels = get_labels()
     except ActionUnsuccessful as e:
-        print(e)
-        return
+        eprint(e)
+        return 1
 
     if (args.verbose):
         print("Starting node list.")
     try:
         node_list = create_node_list(args.verbose, ms_labels)
     except ActionUnsuccessful as e:
-        print(e)
-        return
+        eprint(e)
+        return 1
 
     if (args.verbose):
         print("Node list created. Has", len(node_list), " nodes.")
@@ -137,14 +142,14 @@ def handle_list_nodes(args):
         try:
             result_list = load_json(filename)
         except JSONDecodeError:
-            print(
+            eprint(
                 f"File {filename} is not a valid JSON file. Ignoring the file as input, creating a new list.")
         except OSError:
-            print(
+            eprint(
                 f"Error reading file {filename}. Ignoring the file as input, creating a new list.")
 
     if result_list is None:
-        print(
+        eprint(
             "Input file {filename} is not found, empty or not a valid JSON file. Creating a new list.")
         result_list = []
 
@@ -156,5 +161,5 @@ def handle_list_nodes(args):
         print(f"Writing to file {filename}.")
     save_json(result_list, filename)
     print(f"Created result file {filename} with {len(result_list)} node{'s'[:len(result_list)!=1]}.")
-    return result_list
+    return 0
 # Path: src/commands/control_workloads.py

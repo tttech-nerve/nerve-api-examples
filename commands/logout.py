@@ -20,9 +20,10 @@
 
 from nerveapi.session import logout
 from nerveapi.utils import ActionUnsuccessful
+from commands.utils import eprint
 
 
-def handle_logout(args):
+def handle_logout(args) -> int:
     """Handles the user logout process and optionally clears saved credentials.
 
     This function attempts to log the user out of the session. If the user has specified not to keep the credentials
@@ -31,12 +32,17 @@ def handle_logout(args):
     Parameters:
     - args: Argparse arguments, expected to include a 'keep_credentials' attribute 
     indicating whether to retain or clear stored credentials.
+
+    Returns:
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error.
     """
     try:
         # Attempt to log out from the current session.
         logout()
         print("Logged out.")
+        return 0
     except ActionUnsuccessful as e:
         # If logout fails (e.g., due to a lost connection or session timeout), print the error.
-        print(f"Logout failed: {e}")
+        eprint(f"Logout failed: {e}")
+        return 1
 

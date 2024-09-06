@@ -17,14 +17,19 @@
 # support@tttech-industrial.com
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
 """Implementation of the create_label command."""
+from pprint import pprint
 
 from nerveapi.labels import get_labels
 from nerveapi.utils import ActionUnsuccessful, DataNotAsExpected
-from pprint import pprint
+from commands.utils import eprint
 
 
-def handle_get_labels(args):
-    """Implementation of the create_label command."""
+def handle_get_labels(args) -> int:
+    """Implementation of the create_label command.
+    
+    Returns:
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error
+    """
     #
     print("Labels operation are in beta stage.")
     try:
@@ -32,9 +37,9 @@ def handle_get_labels(args):
         print("Labels:")
         pprint(labels)
     except ActionUnsuccessful as e:
-        print("Failed to get labels.",e)
-        return
+        eprint("Failed to get labels.",e)
+        return 1
     except DataNotAsExpected as e:
-        print("Failed to get labels. Data seems wrong.",e)
-        return
-    return labels
+        eprint("Failed to get labels. Data seems wrong.",e)
+        return 1
+    return 0

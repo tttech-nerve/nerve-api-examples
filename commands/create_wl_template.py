@@ -21,12 +21,13 @@
 from nerveapi.workloads import get_workload_info
 from nerveapi.utils import load_json, append_ending, ActionUnsuccessful, DataNotAsExpected, complainIfKeysAreNotInDict
 from nerveapi.datastructures import create_workload_definition_from_json
+from commands.utils import eprint
 from dataclasses import asdict
 import json
 from json import JSONDecodeError
 
 
-def handle_create_wl_template(args):
+def handle_create_wl_template(args) -> int:
     """Handles the creation of a workload template based on an input JSON file.
 
     This function loads a workload list from a specified JSON file, then fetches detailed information
@@ -43,7 +44,7 @@ def handle_create_wl_template(args):
             and a 'verbose' attribute to control verbose output.
 
     Returns:
-    - None: The function writes the resulting template to a file and does not return a value.
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error.
     """
     #    
     input_filename = append_ending(args.input_file, ".json")
@@ -51,15 +52,15 @@ def handle_create_wl_template(args):
     try:
         wl_list = load_json(input_filename)
     except JSONDecodeError as e:
-        print("Could not read input file. ")
-        print(e)
-        return
+        eprint("Could not read input file. ")
+        eprint(e)
+        return 1
     except FileNotFoundError:
-        print(f"File {input_filename} not found.")
-        return
+        eprint(f"File {input_filename} not found.")
+        return 1
     except OSError:
-        print(f"Could not open file {input_filename}.")
-        return
+        eprint(f"Could not open file {input_filename}.")
+        return 1
 
     if len(wl_list) > 1:
         print("Multiple workloads in the input list."+
@@ -69,8 +70,8 @@ def handle_create_wl_template(args):
     try:
         complainIfKeysAreNotInDict(wl, ["_id", "versions"])
     except DataNotAsExpected:
-        print("The workload in the input list does have the expected format. _id or versions is missing.")
-        return
+        eprint("The workload in the input list does have the expected format. _id or versions is missing.")
+        return 1
 
     if args.verbose and len(wl.get('versions')) > 1:
         print(f"The workload in the input list has {len(wl.get('versions'))} versions.")
@@ -83,25 +84,25 @@ def handle_create_wl_template(args):
     try:
         wl_info = get_workload_info(_id=wl["_id"], versions=wl.get("versions"))
     except ActionUnsuccessful as e:
-        print(e)
-        return
+        eprint(e)
+        return 1
 
     if wl_info["type"] != "docker":
-        print(f"Workload type {wl_info['type']} is not yet supported.")
-        return
+        eprint(f"Workload type {wl_info['type']} is not yet supported.")
+        return 1
 
     try:
         wl_def_as_dict = rewrite_original_source_definition(wl_info)
         wl_def = create_workload_definition_from_json(wl_def_as_dict)
     except DataNotAsExpected as e:
-        print(e)
-        return
+        eprint(e)
+        return 1
 
 
     with open(output_filename, 'w') as output_file:
         json.dump(asdict(wl_def), output_file, indent=4)
         print(f"Template saved to {output_filename}.")
-    return asdict(wl_def)
+    return 0
 
 # Takes a json and sees it contains the way the source is defined in the MS.
 # Since we use a simplified defintion, this rewrites the definition in order to be interpretable

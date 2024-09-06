@@ -26,10 +26,11 @@ from nerveapi.nodes import (
     create_node_list_from_node_list,
     all_nodes_have_serial_numbers
 )
+from commands.utils import eprint
 from json import JSONDecodeError
 
 
-def handle_reboot_nodes(args):
+def handle_reboot_nodes(args) -> int:
     """Reboots a list of nodes based on the input JSON file provided through command-line arguments.
 
     This function reads a JSON file specified by the user, which contains a list of nodes identified
@@ -46,24 +47,22 @@ def handle_reboot_nodes(args):
             to control verbose output.
 
     Returns:
-    - None: The function prints the outcome of the reboot operation(s) to the console and does not
-            return a value. It shows the count of successfully rebooted nodes and, if applicable,
-            the number of nodes that failed to reboot.
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error.
     """
     #
     filename = append_ending(args.input_file, ".json")
     try:
         node_list = load_json(filename)
     except JSONDecodeError as e:
-        print("Could not read input file. ")
-        print(e)
-        return
+        eprint("Could not read input file. ")
+        eprint(e)
+        return 1
     except FileNotFoundError:
-        print(f"File {filename} not found.")
-        return
+        eprint(f"File {filename} not found.")
+        return 1
     except OSError:
-        print(f"Could not open file {filename}.")
-        return
+        eprint(f"Could not open file {filename}.")
+        return 1
 
     if not all_nodes_have_serial_numbers(node_list):
         if args.verbose:
@@ -75,7 +74,7 @@ def handle_reboot_nodes(args):
         confirmation = input(
             f"This will reboot {len(node_list)} nodes. Are you sure? (y/n): ")
         if confirmation.lower() != 'y':
-            return
+            return 0
 
     count = 0
     for node in node_list:
@@ -85,10 +84,12 @@ def handle_reboot_nodes(args):
             reboot_node(node["serial_number"])
             count += 1
         except ActionUnsuccessful as e:
-            print(str(e))
+            eprint(str(e))
 
     if count < len(node_list):
-        print(f"Rebooted {count} node{'s'[:count!=1]}, failed to reboot {len(node_list) - count} "+
+        eprint(f"Rebooted {count} node{'s'[:count!=1]}, failed to reboot {len(node_list) - count} "+
               f"node{'s'[:(len(node_list) - count)!=1]}.")
+        return 1
     else:
         print("Rebooted all nodes.")
+        return 0

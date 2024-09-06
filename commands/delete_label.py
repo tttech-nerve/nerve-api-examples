@@ -20,14 +20,20 @@
 
 from nerveapi.labels import delete_label
 from nerveapi.utils import ActionUnsuccessful
+from commands.utils import eprint
 
-def handle_delete_label(args):
-    """Implementation of the create_label command."""
+def handle_delete_label(args) -> int:
+    """Implementation of the create_label command.
+    
+    Returns:
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error.
+    """
     print("Labels operation are in beta stage.")
 
     try:
         delete_label(_id=args.id)
         print("Deleted")
+        return 0
     except ActionUnsuccessful as e:
-        print("Failed to delete label.",e)
-        return
+        eprint("Failed to delete label.",e)
+        return 1

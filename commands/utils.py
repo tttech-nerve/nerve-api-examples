@@ -16,23 +16,11 @@
 # Contact Information:
 # support@tttech-industrial.com
 # TTTech Industrial Automation AG, Schoenbrunnerstrasse 7, 1040 Vienna, Austria
-"""Implementation of the create_label command."""
+"""This module provides some utility functions used by the CLI commands."""
 
-from nerveapi.labels import create_label
-from nerveapi.utils import ActionUnsuccessful
-from commands.utils import eprint
+import sys
 
-def handle_create_label(args) -> int:
-    """Implementation of the create_label command.
-    
-    Returns:
-    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error.
-    """
-    print("Labels operation are in beta stage.")
-    try:
-        create_label(key=args.key, value=args.value)
-        print("Label created.")
-        return 0
-    except ActionUnsuccessful as e:
-        eprint("Failed to create label. Server responded:",e)
-        return 1
+
+def eprint(*args, **kwargs):
+    """Prints the given arguments to stderr."""
+    print(*args, file=sys.stderr, **kwargs)

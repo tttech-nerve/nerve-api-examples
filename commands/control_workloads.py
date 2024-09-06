@@ -27,6 +27,7 @@ from nerveapi.nodes import (
     all_nodes_have_serial_numbers,
     all_workloads_have_device_ids
 )
+from commands.utils import eprint
 from json import JSONDecodeError
 
 
@@ -48,19 +49,23 @@ def handle_restart_workloads(args):
     return handle_control_workloads("restart", args)
 
 
-def handle_control_workloads(action, args):
-    """Implementation of the control_workloads command."""
+def handle_control_workloads(action, args) -> int:
+    """Implementation of the control_workloads command.
+    
+    Returns:
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error
+    """
     #
     input_filename = append_ending(args.input_file, ".json")
     try:
         node_list = load_json(input_filename)
     except JSONDecodeError as e:
-        print("Could not read input file. ")
-        print(e)
-        return
+        eprint("Could not read input file. ")
+        eprint(e)
+        return 1
     except FileNotFoundError:
-        print(f"File {input_filename} not found.")
-        return
+        eprint(f"File {input_filename} not found.")
+        return 1
 
     if ((not all_nodes_have_serial_numbers(node_list)) or
             (not all_workloads_have_device_ids(node_list))):
@@ -74,7 +79,7 @@ def handle_control_workloads(action, args):
         confirmation = input(
             f"This will {action} {len(node_list)} workloads. Are you sure? (y/n): ")
         if confirmation.lower() != 'y':
-            return
+            return 0
 
     count = 0
     failed = 0
@@ -90,13 +95,14 @@ def handle_control_workloads(action, args):
                 count += 1
             except ActionUnsuccessful as e:
                 failed += 1
-                print(e)
+                eprint(e)
 
     if failed:
-        print(f"Succeeded to initialize '{action}' command on", count,
+        eprint(f"Succeeded to initialize '{action}' command on", count,
               f"workload{'s'[:count!=1]}, failed on", failed, ".")
+        return 1
     elif count == 0:
         print("No workloads to control.")
     else:
         print(f"Succeded to initialize '{action}'  command on all workloads.")
-    return count
+    return 0

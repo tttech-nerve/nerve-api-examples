@@ -39,9 +39,10 @@ from nerveapi.utils import (
     save_credentials
 )
 from nerveapi.utils import append_ending, DataNotAsExpected
+from commands.utils import eprint
 
 
-def handle_set_login(args):
+def handle_set_login(args) -> int:
     """Handles setting and storing login credentials for the Nerve management system.
 
     This function attempts to fetch login credentials from various sources in a prioritized order:
@@ -58,7 +59,7 @@ def handle_set_login(args):
     command-line arguments.
 
     Returns:
-    None: The function primarily prints to console and saves session information, without returning any value.
+    - int: The exit code to return to the shell. 0 indicates success, while any other value indicates an error.
     """
     # Try fetching credentials from command-line arguments
     url = None
@@ -130,19 +131,19 @@ def handle_set_login(args):
         prompted_for_password = True
 
     if not validators.url(url): 
-        print("Invalid URL provided.")
-        return
+        eprint("Invalid URL provided.")
+        return 1
     if not validators.email(username):
-        print("Invalid username provided. Nerve usernames are email addresses.")
-        return
+        eprint("Invalid username provided. Nerve usernames are email addresses.")
+        return 1
 
     session_id = None
     try:
         session_id = login(url, username, password)
         save_session_id(session_id, url)
     except ActionUnsuccessful as e:
-        print(f"Login failed: {e}")
-        return
+        eprint(f"Login failed: {e}")
+        return 1
 
     print("Login successful.")
 
@@ -168,12 +169,12 @@ def handle_set_login(args):
     try:
         version = get_ms_version()
     except DataNotAsExpected as e:
-        print(
+        eprint(
             f"Warning: Could not determine the version of the management system. {e}")
-        return
+        return 1
     except ActionUnsuccessful as e:
-        print(f"Warning: Could not determine the version of the management system. {e}")
-        return
+        eprint(f"Warning: Could not determine the version of the management system. {e}")
+        return 1
 
     if (version not in ["2.8.0", "2.8.1"]):
         print("")
@@ -183,3 +184,4 @@ def handle_set_login(args):
 
     print()
     print("Set login to", url, "with version", version, "as", username, ".")
+    return 0
