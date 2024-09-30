@@ -35,6 +35,7 @@ from commands.control_workloads import (
     handle_stop_workloads,
     handle_restart_workloads
 )
+from commands.control_dna import handle_deploy_dna, handle_get_dna
 import sys
 from argparse import RawTextHelpFormatter
 
@@ -248,6 +249,17 @@ def main():
 # SUPPRESS, action="store")
     parser_restart_workloads.add_argument("-V", '--verbose', help='Show debug information.', action="store_true")
     parser_restart_workloads.set_defaults(func=handle_restart_workloads)
+
+    parser_deploy_dna = subparsers.add_parser("deploy_dna", help="Deploy DNA file to node.", description="Deploys DNA file to specified node.")
+    parser_deploy_dna.add_argument("-f", "--file_name", default="dna.yaml", help="Input filename. Ignore for 'dna.yaml'.")
+    parser_deploy_dna.add_argument("-n", "--node_name", required=True, help="Node to deploy on, supports regex.")
+    parser_deploy_dna.add_argument("-r", "--restart_all_workloads", default=False, help="Whether to restart all deployed workloads.")
+    parser_deploy_dna.set_defaults(func=handle_deploy_dna)
+    parser_get_dna = subparsers.add_parser('get_dna', help="Get DNA file from node.", description="Gets DNA file from specified node.")
+    parser_get_dna.add_argument("-o", "--output", default="dna.yaml", help="Output filename. Ignore for 'dna.yaml'.")
+    parser_get_dna.add_argument("-n", "--node_name", required=True, help="Node to get DNA file from, supports regex.")
+    parser_get_dna.add_argument("-s", "--strip_hash", default=False, help="Strip hashes from DNA file.")
+    parser_get_dna.set_defaults(func=handle_get_dna)
 
 
     if len(sys.argv)==1:
