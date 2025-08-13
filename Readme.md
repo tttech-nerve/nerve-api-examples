@@ -1,4 +1,7 @@
-# Nerve API Example Scripts
+# Nerve API Example Scripts (DEPRECATED)
+
+## Deprecated
+This repository is deprecated and has been replaced by the [Nerve API CLI](https://github.com/tttech-nerve/nerve-api-cli) based on the [Nerve API Python Library (nerve_lib)](https://github.com/tttech-nerve/nerve-api-python). Refer to the linked repositories for details.
 
 ## Description
 
